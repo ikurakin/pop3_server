@@ -48,8 +48,15 @@ class DBQueries():
             for e in emails:
                 model.Emails.create(**e)
 
-    # user_exists checks if 
     def user_exists(self, user_name):
+        """
+        Args:
+            user_name (str)
+        Return:
+            bool:
+                True if user name was find in table
+                False if user name wasn't find in table
+        """
         try:
             user = model.Users.get(model.Users.name == user_name)
             if user.name:
@@ -58,6 +65,15 @@ class DBQueries():
             return False
 
     def authenticate_user(self, user_name, passw):
+        """
+        Args:
+            user_name (str)
+            passw (str)
+        Return:
+            bool:
+                True if pair (user, passw) were find in table
+                False if pair (user, passw) weren't find in table
+        """
         try:
             user = model.Users.get(model.Users.name == user_name, model.Users.passw == self.passw_hash(passw))
             if user.name:
@@ -66,15 +82,33 @@ class DBQueries():
             return False
 
     def passw_hash(self, passw):
+        """
+        Args:
+            passw (str)
+        Return:
+            str: hash of password string
+        """
         return hashlib.sha224(passw).hexdigest()
 
-    def get_user_emails(self, user):
-        emails = model.Emails.select().join(model.Users).where(model.Users.name == user)
+    def get_user_emails(self, user_name):
+        """
+        Args:
+            user_name (str)
+        Return:
+            list: list of strings, each string includes email id and subject
+        """
+        emails = model.Emails.select().join(model.Users).where(model.Users.name == user_name)
         return ["{id} {subject}".format(id=e.id, subject=e.subject) for e in emails]
 
     def get_email(self, id):
+        """
+        Args:
+            id (int)
+        Return:
+            str, str: pair of email subject and email body
+        """
         try:
             email = model.Emails.get(model.Emails.id == id)
             return email.subject, email.body
         except:
-            return None, None
+            return "", ""
