@@ -3,10 +3,7 @@ __author__ = 'ikurakin'
 from unittest import TestCase
 import hashlib
 
-from peewee import IntegrityError
-
 from controllers import DBQueries
-import model
 
 
 class DbQueriesTestCaise(TestCase):
