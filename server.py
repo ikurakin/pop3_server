@@ -44,28 +44,24 @@ class POP3Handler(SocketServer.BaseRequestHandler):
 
     # implements USER POP3 method behavior
     def user_method(self):
-        if self.TRANSACTION:
-            self.request.sendall(self.ERR)
-            return
-        if len(self.data) > 1:
-            self.user = self.data[1]
-            if self.queries.user_exists(self.user):
-                self.request.sendall(self.OK)
-                return
+        if not self.TRANSACTION:
+            if len(self.data) > 1:
+                self.user = self.data[1]
+                if self.queries.user_exists(self.user):
+                    self.request.sendall(self.OK)
+                    return
         self.request.sendall(self.ERR)
 
     # implements PASS POP3 method behavior
     def pass_method(self):
-        if len(self.data) > 1:
-            passw = self.data[1]
-            if self.TRANSACTION:
-                self.request.sendall(self.ERR)
-                return
-            if self.user:
-                if self.queries.authenticate_user(self.user, passw):
-                    self.TRANSACTION = True
-                    self.request.sendall(self.OK)
-                    return
+        if not self.TRANSACTION:
+            if len(self.data) > 1:
+                passw = self.data[1]
+                if self.user:
+                    if self.queries.authenticate_user(self.user, passw):
+                        self.TRANSACTION = True
+                        self.request.sendall(self.OK)
+                        return
         self.request.sendall(self.ERR)
 
     # implements LIST POP3 method behavior
@@ -73,11 +69,9 @@ class POP3Handler(SocketServer.BaseRequestHandler):
         if self.TRANSACTION:
             emails = self.queries.get_user_emails(self.user)
             if emails:
-                string = self.OK
-                string += "You've got {} letters in your mailbox\r\n".format(len(emails))
-                string += "\r\n".join(emails)
-                string += "\r\nFeel free to fetch any with RETR command\r\n"
-                self.request.sendall(string)
+                str_list = [self.OK, "You've got {} letters in your mailbox\r\n".format(len(emails)),
+                            "\r\n".join(emails), "\r\nFeel free to fetch any with RETR command\r\n"] 
+                self.request.sendall("".join(str_list))
                 return
         self.request.sendall(self.ERR)
 
