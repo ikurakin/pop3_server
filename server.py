@@ -70,7 +70,7 @@ class POP3Handler(SocketServer.BaseRequestHandler):
             emails = self.queries.get_user_emails(self.user)
             if emails:
                 str_list = [self.OK, "You've got {} letters in your mailbox\r\n".format(len(emails)),
-                            "\r\n".join(emails), "\r\nFeel free to fetch any with RETR command\r\n"] 
+                            "\r\n".join(emails), "\r\nFeel free to fetch any with RETR command\r\n"]
                 self.request.sendall("".join(str_list))
                 return
         self.request.sendall(self.ERR)

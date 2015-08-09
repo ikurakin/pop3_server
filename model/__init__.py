@@ -2,7 +2,7 @@ __author__ = 'ikurakin'
 
 from peewee import *
 
-db = SqliteDatabase('pop3.db')
+db = SqliteDatabase('pop3.sqlite', threadlocals=True)
 
 class BaseModel(Model):
     class Meta:
@@ -10,7 +10,7 @@ class BaseModel(Model):
 
 class Users(BaseModel):
 
-    name = CharField(max_length=100, index=True, unique=True)
+    name = CharField(unique=True, index=True, max_length=100)
     passw = CharField()
 
 class Emails(BaseModel):

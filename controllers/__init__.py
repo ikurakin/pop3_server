@@ -2,6 +2,8 @@ __author__ = 'ikurakin'
 
 import hashlib
 
+from peewee import IntegrityError
+
 import model
 
 
@@ -22,20 +24,23 @@ class DBQueries():
             self.fill_emails()
 
     def create_user_table(self):
-        self.db.create_table(model.Users)
+        model.Users.create_table()
 
     def create_emails_table(self):
-        self.db.create_table(model.Emails)
+        model.Emails.create_table()
 
     # fill_users fills user table with test data
     def fill_users(self):
-        with self.db.transaction():
-            usr_pssw = [
-                {"name": "Khil", "passw": self.passw_hash("Trololo")},
-                {"name": "Pablo", "passw": self.passw_hash("Pikasso")}
-            ]
-            for u in usr_pssw:
-                model.Users.create(**u)
+        try:
+            with self.db.transaction():
+                usr_pssw = [
+                    {"name": "Khil", "passw": self.passw_hash("Trololo")},
+                    {"name": "Pablo", "passw": self.passw_hash("Pikasso")}
+                ]
+                for u in usr_pssw:
+                    model.Users.create(**u)
+        except IntegrityError:
+            pass
 
     # fill_emails fills emails table with test data
     def fill_emails(self):
@@ -47,6 +52,11 @@ class DBQueries():
             ]
             for e in emails:
                 model.Emails.create(**e)
+
+    def clear_tables(self):
+        with self.db.transaction():
+            model.Emails.delete().execute()
+            model.Users.delete().execute()
 
     def user_exists(self, user_name):
         """
