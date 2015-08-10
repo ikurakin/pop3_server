@@ -9,7 +9,7 @@ class POP3ServerTestCaise(TestCase):
     OK = "+OK\r\n"
 
     def setUp(self):
-        HOST, PORT = "localhost", 9999
+        HOST, PORT = "localhost", 1110
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((HOST, PORT))
         self.receive_data()
