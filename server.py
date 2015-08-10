@@ -90,7 +90,7 @@ class ThreadingPOP3Server(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
 
 if __name__ == "__main__":
-    HOST, PORT = "localhost", 1110
+    HOST, PORT = "0.0.0.0", 1110
 
     # Create the server, binding to localhost on port 9999
     server = ThreadingPOP3Server((HOST, PORT), POP3Handler)
